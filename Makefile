@@ -24,4 +24,4 @@ clean:
 build: $(UF2)
 
 install: $(UF2)
-	mv $(UF2) /run/media/$USER/RIP-RP2
+	mv $(UF2) /run/media/$(USER)/RIP-RP2
