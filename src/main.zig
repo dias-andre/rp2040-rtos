@@ -1,5 +1,7 @@
 const std = @import("std");
 const gpio = @import("hal/gpio.zig");
+const clocks = @import("hal/clocks.zig");
+const timer = @import("hal/timer.zig");
 
 // Entrypoint
 export fn _start() linksection(".text.entry") noreturn {
@@ -10,6 +12,8 @@ export fn _start() linksection(".text.entry") noreturn {
     // Wait for the hardware to confirm it has powered up
     // while ((RESETS_DONE.* & (1 << 5)) == 0) {}
     gpio.enable_io_bank();
+    clocks.crystal_init();
+    timer.enable_timer();
 
     // 2. Configure pin 25 to be controlled via software (SIO = function 5)
     // IO_BANK0_GPIO25_CTRL.* = 5;
@@ -26,12 +30,13 @@ export fn _start() linksection(".text.entry") noreturn {
         gpio.toggle_pin(25);
 
         // A "raw" delay burning CPU cycles
-        var i: u32 = 0;
-        while (i < 500000) {
-            // Tell the compiler not to optimize away this loop
-            asm volatile ("nop");
-            i += 1;
-        }
+        // var i: u32 = 0;
+        // while (i < 500000) {
+        //     // Tell the compiler not to optimize away this loop
+        //     asm volatile ("nop");
+        //     i += 1;
+        // }
+        timer.sleep(5000);
     }
 }
 
