@@ -1,9 +1,12 @@
 const regs = @import("registers.zig");
 
 pub fn init() void {
-    const gpio_bits = @as(u32, (1 << 5) | (1 << 8)); // enables pad_bank0
-    regs.resets_hw.reset &= ~gpio_bits;
-    while ((regs.resets_hw.reset_done & gpio_bits) != gpio_bits) {}
+    // const gpio_bits = @as(u32, (1 << 5) | (1 << 8)); // enables pad_bank0
+    // regs.resets_hw.reset &= ~gpio_bits;
+    // while ((regs.resets_hw.reset_done & gpio_bits) != gpio_bits) {}
+    regs.resets_map.reset.io_bank0 = false;
+    regs.resets_map.reset.pads_bank0 = false;
+    while (!regs.resets_map.reset.io_bank0 and !regs.resets_map.reset_done.pads_bank0) {}
 }
 
 pub fn init_pin(pin: u5) void {

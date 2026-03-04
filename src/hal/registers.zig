@@ -113,6 +113,9 @@ const SioHw = extern struct {
     spinlock: [32]u32, // 0x100 to 0x17c (Spinlock registers 0 through 31)
 };
 
+/// Mapped as defined in RP2040 Datasheet section 2.14.3
+const ResetRegisters = packed struct { adc: bool, busctrl: bool, dma: bool, i2c0: bool, i2c1: bool, io_bank0: bool, io_qspi: bool, jtag: bool, pads_bank0: bool, pads_qspi: bool, pio0: bool, pio1: bool, pll_sys: bool, pll_usb: bool, pwm: bool, rtc: bool, spi0: bool, spi1: bool, syscfg: bool, sysinfo: bool, tbman: bool, timer: bool, uart0: bool, uart1: bool, usbctrl: bool, _reserved: u7 };
+
 const ResetsHw = extern struct { reset: u32, wdsel: u32, reset_done: u32 };
 
 const GpioHw = extern struct { status: u32, ctrl: u32 };
@@ -302,3 +305,10 @@ pub const clocks: *volatile ClocksHw = @ptrFromInt(CLOCKS_BASE);
 pub const xosc_hw: *volatile XoscHw = @ptrFromInt(XOSC_BASE);
 pub const timer_hw: *volatile TimerHw = @ptrFromInt(TIMER_BASE);
 pub const watchdog: *volatile WatchdogHw = @ptrFromInt(WATCHDOG_BASE);
+
+/// Mapped as defined in RP2040 Datasheet section 2.14.3
+pub const resets_map = struct {
+    pub const reset = @as(*volatile ResetRegisters, @ptrFromInt(RESETS_BASE));
+    pub const wdsel = @as(*volatile ResetRegisters, @ptrFromInt(RESETS_BASE + 0x4));
+    pub const reset_done = @as(*const volatile ResetRegisters, @ptrFromInt(RESETS_BASE + 0x8));
+};
