@@ -2,52 +2,57 @@ const build_options = @import("build_options");
 
 const RESETS_BASE: u32 = switch (build_options.chip) {
     .rp2040 => 0x4000c000,
-    .rp2350 => 0x40010000
+    .rp2350 => 0x40020000,
 };
 
 const IO_BANK0_BASE: u32 = switch (build_options.chip) {
     .rp2040 => 0x40014000,
-    .rp2350 => 0x40028000
+    .rp2350 => 0x40028000,
+};
+
+const PADS_BANK0_BASE: u32 = switch (build_options.chip) {
+    .rp2040 => 0x4001c000,
+    .rp2350 => 0x40038000,
 };
 
 const IO_QSPI_BANK0_BASE: u32 = switch (build_options.chip) {
     .rp2040 => 0x40018000,
-    .rp2350 => 0x40030000
+    .rp2350 => 0x40030000,
 };
 
 const UART0_BASE: u32 = switch (build_options.chip) {
     .rp2040 => 0x40034000,
-    .rp2350 => 0x40070000
+    .rp2350 => 0x40070000,
 };
 
 const UART1_BASE: u32 = switch (build_options.chip) {
     .rp2040 => 0x40038000,
-    .rp2350 => 0x40078000
+    .rp2350 => 0x40078000,
 };
 
 const SPI0_BASE: u32 = switch (build_options.chip) {
     .rp2040 => 0x4003c000,
-    .rp2350 => 0x40088000
+    .rp2350 => 0x40080000,
 };
 
 const SPI1_BASE: u32 = switch (build_options.chip) {
     .rp2040 => 0x40040000,
-    .rp2350 => 0x40088000
+    .rp2350 => 0x40088000,
 };
 
 const I2C0_BASE: u32 = switch (build_options.chip) {
     .rp2040 => 0x40044000,
-    .rp2350 => 0x40090000
+    .rp2350 => 0x40090000,
 };
 
 const I2C1_BASE: u32 = switch (build_options.chip) {
     .rp2040 => 0x40048000,
-    .rp2350 => 0x40098000
+    .rp2350 => 0x40098000,
 };
 
 const PWM_BASE: u32 = switch (build_options.chip) {
     .rp2040 => 0x40098000,
-    .rp2350 => 0x400a8000
+    .rp2350 => 0x400a8000,
 };
 
 const PIO0_BASE: u32 = 0x50200000;
@@ -63,12 +68,12 @@ const CLOCKS_BASE: u32 = switch (build_options.chip) {
 
 const XOSC_BASE: u32 = switch (build_options.chip) {
     .rp2040 => 0x40024000,
-    .rp2350 => 0x40048000
+    .rp2350 => 0x40048000,
 };
 
 const TIMER_BASE: u32 = switch (build_options.chip) {
     .rp2040 => 0x40054000,
-    .rp2350 => 0x400b0000
+    .rp2350 => 0x400b0000,
 };
 
 const TIMER1_BASE: u32 = 0x400b8000; // Only available on RP2350.
@@ -80,12 +85,12 @@ const WATCHDOG_BASE: usize = switch (build_options.chip) {
 
 const PLL_SYS_BASE: u32 = switch (build_options.chip) {
     .rp2040 => 0x40028000,
-    .rp2350 => 0x40050000
+    .rp2350 => 0x40050000,
 };
 
 const PLL_USB_BASE: u32 = switch (build_options.chip) {
     .rp2040 => 0x4002c000,
-    .rp2350 => 0x40058000
+    .rp2350 => 0x40058000,
 };
 
 /// Single-cycle IO (SIO) Register Map
@@ -171,7 +176,10 @@ const SioHw = extern struct {
 };
 
 /// Mapped as defined in RP2040 Datasheet section 2.14.3
-const ResetRegisters = packed struct { adc: bool, busctrl: bool, dma: bool, i2c0: bool, i2c1: bool, io_bank0: bool, io_qspi: bool, jtag: bool, pads_bank0: bool, pads_qspi: bool, pio0: bool, pio1: bool, pll_sys: bool, pll_usb: bool, pwm: bool, rtc: bool, spi0: bool, spi1: bool, syscfg: bool, sysinfo: bool, tbman: bool, timer: bool, uart0: bool, uart1: bool, usbctrl: bool, _reserved: u7 };
+const ResetRegisters = switch (build_options.chip) {
+    .rp2040 => packed struct { adc: bool, busctrl: bool, dma: bool, i2c0: bool, i2c1: bool, io_bank0: bool, io_qspi: bool, jtag: bool, pads_bank0: bool, pads_qspi: bool, pio0: bool, pio1: bool, pll_sys: bool, pll_usb: bool, pwm: bool, rtc: bool, spi0: bool, spi1: bool, syscfg: bool, sysinfo: bool, tbman: bool, timer: bool, uart0: bool, uart1: bool, usbctrl: bool, _reserved: u7 },
+    .rp2350 => packed struct { adc: bool, busctrl: bool, dma: bool, hstx: bool, i2c0: bool, i2c1: bool, io_bank0: bool, io_qspi: bool, jtag: bool, pads_bank0: bool, pads_qspi: bool, pio0: bool, pio1: bool, pio2: bool, pll_sys: bool, pll_usb: bool, pwm: bool, sha256: bool, spi0: bool, spi1: bool, syscfg: bool, sysinfo: bool, tbman: bool, timer0: bool, timer1: bool, trng: bool, uart0: bool, uart1: bool, usbctrl: bool, _reserved: u3 },
+};
 
 const ResetsHw = extern struct { reset: u32, wdsel: u32, reset_done: u32 };
 
@@ -357,7 +365,7 @@ const PadBankHw = extern struct { vol: u32, pads: [30]PadHw, _reserved: [2]u32 }
 pub const sio_hw = @as(*volatile SioHw, @ptrFromInt(SIO_BASE));
 pub const resets_hw = @as(*volatile ResetsHw, @ptrFromInt(RESETS_BASE));
 pub const io_bank0_hw = @as(*volatile IoBank0Hw, @ptrFromInt(IO_BANK0_BASE));
-pub const pads_bank0_hw = @as(*volatile PadBankHw, @ptrFromInt(0x4001c000));
+pub const pads_bank0_hw = @as(*volatile PadBankHw, @ptrFromInt(PADS_BANK0_BASE));
 
 pub const uart0 = @as(*volatile UartHw, @ptrFromInt(UART0_BASE));
 pub const uart1 = @as(*volatile UartHw, @ptrFromInt(UART1_BASE));
