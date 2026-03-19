@@ -183,10 +183,15 @@ const ResetRegisters = switch (build_options.chip) {
 
 const ResetsHw = extern struct { reset: u32, wdsel: u32, reset_done: u32 };
 
+const GPIO_COUNT = switch (build_options.chip) {
+    .rp2040 => 30,
+    .rp2350 => 48
+};
+
 const GpioHw = extern struct { status: u32, ctrl: u32 };
 
 const IoBank0Hw = extern struct {
-    io: [30]GpioHw,
+    io: [GPIO_COUNT]GpioHw,
 };
 
 /// Clocks Peripheral Register Map
@@ -360,7 +365,7 @@ pub const PLLMap = extern struct { cs: packed struct { refdiv: u6, _reserved0: u
 
 /// Mapped as defined in RP2040 Datasheet section 2.19.6.3
 const PadHw = packed struct { slew_fast: bool, schmitt: bool, pde: bool, pue: bool, drive: u2, ie: bool, od: bool, _reserved: u24 };
-const PadBankHw = extern struct { vol: u32, pads: [30]PadHw, _reserved: [2]u32 };
+const PadBankHw = extern struct { vol: u32, pads: [GPIO_COUNT]PadHw, _reserved: [2]u32 };
 
 pub const sio_hw = @as(*volatile SioHw, @ptrFromInt(SIO_BASE));
 pub const resets_hw = @as(*volatile ResetsHw, @ptrFromInt(RESETS_BASE));
