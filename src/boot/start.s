@@ -36,9 +36,9 @@
 copy_loop:
   ldr r3, [r0]
   str r3, [r1]
-  add r0, #4
-  add r1, #4
-  sub r2, #1
+  adds r0, #4
+  adds r1, #4
+  subs r2, #1
   bne copy_loop
 
   ldr r0, =0x20040101
@@ -66,21 +66,21 @@ copy_data:
 
   ldr r0, [r1]
   str r0, [r2]
-  add r1, #4
-  add r2, #4
+  adds r1, #4
+  adds r2, #4
   b .data_loop
 
 zero_bss:
   ldr r1, =_sbss @ start pointer (RAM)
   ldr r2, =_ebss @ end pointer (RAM)
-  mov r0, #0
+  movs r0, #0
 
 .bss_loop:
   cmp r1, r2
   bge call_main
 
   str r0, [r1]
-  add r1, #4
+  adds r1, #4
   b .bss_loop
 
 call_main:

@@ -9,10 +9,14 @@ pub fn build(b: *std.Build) void {
 
     const target_query = std.Target.Query{
         .cpu_arch = .thumb,
-        .cpu_model = .{ .explicit = &std.Target.arm.cpu.cortex_m0plus },
+        .cpu_model = switch (target_chip) {
+            .rp2040 => .{ .explicit = &std.Target.arm.cpu.cortex_m0plus },
+            .rp2350 => .{ .explicit = &std.Target.arm.cpu.cortex_m33 },
+        },
         .os_tag = .freestanding,
         .abi = .eabi,
     };
+
     const target = b.resolveTargetQuery(target_query);
 
     const optimize = std.builtin.OptimizeMode.ReleaseSmall;
@@ -25,9 +29,10 @@ pub fn build(b: *std.Build) void {
             .optimize = optimize,
         }),
     });
-    
+
     if (target_chip == .rp2040) {
-        kernel.addObjectFile(b.path("out/start.o"));
+        // kernel.addObjectFile(b.path("out/start.o"));
+        kernel.addAssemblyFile(b.path("src/boot/start.s"));
         kernel.setLinkerScript(b.path("linker_rp2040.ld"));
     } else {
         kernel.setLinkerScript(b.path("linker_rp2350.ld"));
