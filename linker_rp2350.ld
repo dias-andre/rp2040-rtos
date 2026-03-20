@@ -2,22 +2,25 @@ ENTRY(_start)
 
 MEMORY
 {
-  RAM (rwx) : ORIGIN = 0x20000000, LENGTH = 520K
+  RAM  (rwx) : ORIGIN = 0x20000000, LENGTH = 520K
   FLASH (rx) : ORIGIN = 0x10000000, LENGTH = 4M
 }
 
 SECTIONS
 {
   . = 0x10000000;
-
+  
   .boot_block : {
-    __boot_block_start = .;
     KEEP(*(.embedded_block))
+    . = ALIGN(32);
   } > FLASH
 
-  .text 0x10000100 : {
-    __logical_binary_start = .;
-    KEEP(*(.text.entry)) 
+  .vectors : {
+    KEEP(*(.vectors))
+  } > FLASH
+
+  .text : {
+    KEEP(*(.text.entry))
     *(.text*)
     *(.rodata*)
     *(.ARM.extab* .gnu.linkonce.armextab.*)
@@ -35,7 +38,7 @@ SECTIONS
 
   .data : ALIGN(4) {
     _sdata = .;
-    *(.data*) 
+    *(.data*)
     . = ALIGN(4);
     _edata = .;
   } > RAM AT> FLASH
@@ -44,7 +47,7 @@ SECTIONS
     _sbss = .;
     *(.bss*)
     *(COMMON)
-    . = ALIGN(4); 
+    . = ALIGN(4);
     _ebss = .;
   } > RAM
 
