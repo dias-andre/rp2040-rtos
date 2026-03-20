@@ -22,7 +22,7 @@ pub fn build(b: *std.Build) void {
     const optimize = std.builtin.OptimizeMode.ReleaseSmall;
 
     const kernel = b.addExecutable(.{
-        .name = "kernel",
+        .name = "kernel.elf",
         .root_module = b.createModule(.{
             .root_source_file = b.path("src/main.zig"),
             .target = target,
@@ -38,6 +38,7 @@ pub fn build(b: *std.Build) void {
         kernel.addAssemblyFile(b.path("src/boot/start.s"));
         kernel.setLinkerScript(b.path("linker_rp2040.ld"));
     } else {
+        kernel.addAssemblyFile(b.path("src/rp2350/vectors.s"));
         kernel.setLinkerScript(b.path("linker_rp2350.ld"));
     }
 

@@ -9,7 +9,7 @@ else
 endif
 
 OUT_DIR = out
-ELF = zig-out/bin/kernel
+ELF = zig-out/bin/kernel.elf
 BIN = $(OUT_DIR)/firmware_$(CHIP).bin
 UF2 = $(OUT_DIR)/image_$(CHIP).uf2
 
@@ -25,7 +25,7 @@ build:
 	
 	@echo "=> [3/3] Packaging to UF2 format (Family ID: $(FAMILY_ID))..."
 # 	python3 tools/uf2conv.py -b 0x10000000 -f $(FAMILY_ID) -o $(UF2) $(BIN)
-	picotool uf2 convert $(BIN) -t bin $(UF2) --family rp2350-arm-s --abs-block 0x10000000
+	picotool uf2 convert $(BIN) -t bin $(UF2) --family rp2350-arm-s
 	@echo "=> Success! UF2 image is ready at: $(UF2)"
 
 rp2040:
