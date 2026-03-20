@@ -6,7 +6,7 @@ pub fn init() void {
     // while ((regs.resets_hw.reset_done & gpio_bits) != gpio_bits) {}
     regs.resets_map.reset.io_bank0 = false;
     regs.resets_map.reset.pads_bank0 = false;
-    while (!regs.resets_map.reset.io_bank0 and !regs.resets_map.reset_done.pads_bank0) {}
+    while (!regs.resets_map.reset_done.io_bank0 and !regs.resets_map.reset_done.pads_bank0) {}
 }
 
 pub fn init_pin(pin: u5) void {
