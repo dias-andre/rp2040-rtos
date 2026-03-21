@@ -3,6 +3,8 @@ const std = @import("std");
 const vectors = @import("vectors.zig");
 const image_def = @import("hal/image_def.zig");
 const gpio = @import("hal/gpio.zig");
+const clock = @import("hal/clocks.zig");
+const timer = @import("hal/timer.zig");
 
 comptime {
     _ = vectors;
@@ -13,11 +15,16 @@ comptime {
 
 export fn kernel_main() callconv(.c) noreturn {
     gpio.init();
+    clock.crystal_init();
+    clock.enable_pll();
+    timer.enable_timer();
+
     gpio.init_pin(25);
     gpio.set_output_mode(25);
-    gpio.write_high(25);
+    gpio.write_low(25);
     while (true) {
-        asm volatile ("nop");
+        gpio.toggle_pin(25);
+        timer.sleep(500);
     }
 }
 
