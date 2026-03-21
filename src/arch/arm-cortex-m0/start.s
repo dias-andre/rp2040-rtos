@@ -84,7 +84,7 @@ zero_bss:
   b .bss_loop
 
 call_main:
-  bl _start
+  bl kernel_main
 
 hang:
   b hang

@@ -35,10 +35,11 @@ pub fn build(b: *std.Build) void {
 
     if (target_chip == .rp2040) {
         // kernel.addObjectFile(b.path("out/start.o"));
-        kernel.addAssemblyFile(b.path("src/arm-cortex-m0/start.s"));
+        kernel.addAssemblyFile(b.path("src/arch/arm-cortex-m0/start.s"));
         kernel.setLinkerScript(b.path("linker_rp2040.ld"));
     } else {
-        kernel.addAssemblyFile(b.path("src/armv8-cortex-m33/vectors.s"));
+        kernel.addAssemblyFile(b.path("src/arch/armv8-cortex-m33/vectors.s"));
+        kernel.addAssemblyFile(b.path("src/arch/armv8-cortex-m33/start.s"));
         kernel.setLinkerScript(b.path("linker_rp2350.ld"));
     }
 
