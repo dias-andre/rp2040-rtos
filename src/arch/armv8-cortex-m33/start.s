@@ -2,10 +2,12 @@
 .cpu cortex-m33
 .thumb
 
+.type kernel_main, %function
+
 .section .text.entry, "ax"
 .global _start
 .type _start, %function
-
+.thumb_func
 _start:
     ldr r0, =0x20082000
     mov sp, r0
